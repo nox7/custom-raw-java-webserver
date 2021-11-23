@@ -61,7 +61,7 @@ public class WebServer {
                 outputStreamWriter.flush();
                 clientSocket.close(); // Close the client socket
             }
-            
+
             // System.out.println("Server closing.");
         }catch(IOException ioException){
             System.out.println(ioException.getMessage());
