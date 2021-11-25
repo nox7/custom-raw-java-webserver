@@ -1,17 +1,24 @@
+package WebServer;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class WebServer {
 
-    public static int httpPortNumber = 80;
+    public int httpPortNumber = 80;
+    public int tlsPortNumber = 443;
 
-    public static void main(String[] args){
-        System.out.println("Starting Java v17 Nox HTTP server.");
+    public WebServer(int httpPortNumber, int tlsPortNumber){
+        this.httpPortNumber = httpPortNumber;
+        this.tlsPortNumber = tlsPortNumber;
+    }
+
+    public void startHTTPServer(){
         try {
 
             // Setup the listener socket on the defined port
-            ServerSocket httpServer = new ServerSocket(WebServer.httpPortNumber);
+            ServerSocket httpServer = new ServerSocket(this.httpPortNumber);
 
             // Infinite loop
             while (true) {
@@ -23,13 +30,13 @@ public class WebServer {
                 // Get the input stream from the client socket
                 // Read to a buffer from an InputStreamReader
                 BufferedReader inputReader = new BufferedReader(
-                        new InputStreamReader(clientSocket.getInputStream())
+                    new InputStreamReader(clientSocket.getInputStream())
                 );
 
                 // Get an output stream for the client connection
                 OutputStream clientSocketOutputStream = clientSocket.getOutputStream();
 
-                // Setup a PrintWriter to write text to the output stream later
+                // Set up a PrintWriter to write text to the output stream later
                 PrintWriter outputStreamWriter = new PrintWriter(clientSocketOutputStream);
 
                 // Read individual lines from the client socket
@@ -45,24 +52,26 @@ public class WebServer {
 
                 System.out.println("Finished reading line.");
                 System.out.println("Responding to client with HTTP 200 OK.");
-                // Respond to the client
-                String responseBody = "<p>Hello world</p>";
+                String bodyPayload = "<!doctype><html><head></head><body><p>Hello world!</p></body></html>";
+
+                HttpStatusLine statusLine = new HttpStatusLine("1.1", 200, "OK");
+                Headers headers = new Headers();
+                Body body = new Body(bodyPayload);
+                headers.addHeader(new Header("Content-Type", "text/html"));
+                headers.addHeader(new Header("Connection", "close"));
+                headers.addHeader(new Header("Connection", "close"));
+                headers.addHeader(new Header("Content-Length", String.valueOf(body.getContentLength())));
 
                 // Prepare the headers and then concat the HTML response body
-                String toSendToClient = "HTTP/1.1 200 OK\r\n"
-                        .concat("Content-Type: text/html\r\n")
-                        .concat("Connection: close\r\n")
-                        .concat("Content-Length: " + responseBody.getBytes().length + "\r\n")
-                        .concat("\r\n")
-                        .concat(responseBody + "\r\n\r\n");
-                System.out.print(toSendToClient);
+                String toSendToClient = statusLine.toString()
+                    .concat(headers.toString())
+                    .concat("\r\n")
+                    .concat(body.toString());
                 outputStreamWriter.print(toSendToClient);
                 System.out.println("Sending output stream to client connection.");
                 outputStreamWriter.flush();
                 clientSocket.close(); // Close the client socket
             }
-
-            // System.out.println("Server closing.");
         }catch(IOException ioException){
             System.out.println(ioException.getMessage());
         }
