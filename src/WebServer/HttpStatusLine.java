@@ -17,7 +17,7 @@ public class HttpStatusLine {
         return "HTTP/"
                 .concat(this.httpVersion)
                 .concat(" ")
-                .concat(String.valueOf(this.responseMessage))
+                .concat(String.valueOf(this.responseCode))
                 .concat(" ")
                 .concat(this.responseMessage)
                 .concat("\r\n");
