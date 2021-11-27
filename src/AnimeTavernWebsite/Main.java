@@ -13,7 +13,7 @@ public class Main {
 
     public static ArrayList<BaseController> registeredControllers = new ArrayList<>();
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
 
         // Register MVC controllers here
         registeredControllers.add(new HomeController());
