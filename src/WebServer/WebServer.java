@@ -119,12 +119,11 @@ public class WebServer {
                 }
 
                 // Response
-                String bodyPayload = "<!doctype><html><head></head><body><p>Hello world!</p></body></html>";
+                String bodyPayload = "<!doctype><html><head></head><body><p style=\"background-color:blue; padding:5rem;\">Hello world!</p></body></html>";
                 HttpStatusLine statusLine = new HttpStatusLine("1.1", 200, "OK");
                 Headers headers = new Headers();
                 Body body = new Body(bodyPayload);
                 headers.addHeader(new Header("Content-Type", "text/html"));
-                headers.addHeader(new Header("Connection", "close"));
                 headers.addHeader(new Header("Connection", "close"));
                 headers.addHeader(new Header("Content-Length", String.valueOf(body.getContentLength())));
 
