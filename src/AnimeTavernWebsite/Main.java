@@ -25,7 +25,6 @@ public class Main {
         controllerLoop:
         for(BaseController c : Main.registeredControllers){
             Method[] instanceMethods = c.getClass().getMethods();
-            methodLoop:
             for (Method m : instanceMethods) {
                 Route[] methodRoutes = m.getDeclaredAnnotationsByType(Route.class);
                 if (methodRoutes.length > 0) {
