@@ -21,30 +21,12 @@ public class Main {
 
         String testURI = "/";
 
-        WebServer httpWebServer = new WebServer(80, 443, 2);
+        WebServer httpWebServer = new WebServer(
+                80,
+                443,
+                2,
+                registeredControllers
+        );
         httpWebServer.startHTTPServer();
-
-
-        // Ignore below
-        controllerLoop:
-        for (BaseController c : Main.registeredControllers) {
-            Method[] instanceMethods = c.getClass().getMethods();
-            for (Method m : instanceMethods) {
-                Route[] methodRoutes = m.getDeclaredAnnotationsByType(Route.class);
-                if (methodRoutes.length > 0) {
-                    for (Route r : methodRoutes) {
-                        if (r.uri().equalsIgnoreCase(testURI)) {
-                            try {
-                                HttpResponse response = (HttpResponse) m.invoke(c);
-                                System.out.println(response.body);
-                                break controllerLoop;
-                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                System.out.println(e.getMessage());
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 }
