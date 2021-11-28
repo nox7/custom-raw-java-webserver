@@ -23,21 +23,19 @@ public class Main {
 
         // Ignore below
         controllerLoop:
-        for(BaseController c : Main.registeredControllers){
+        for (BaseController c : Main.registeredControllers) {
             Method[] instanceMethods = c.getClass().getMethods();
             for (Method m : instanceMethods) {
                 Route[] methodRoutes = m.getDeclaredAnnotationsByType(Route.class);
                 if (methodRoutes.length > 0) {
                     for (Route r : methodRoutes) {
-                        if (r.uri().equalsIgnoreCase(testURI)){
+                        if (r.uri().equalsIgnoreCase(testURI)) {
                             try {
                                 HttpResponse response = (HttpResponse) m.invoke(c);
                                 System.out.println(response.body);
                                 break controllerLoop;
-                            }catch(IllegalAccessException e){
-
-                            }catch(InvocationTargetException e){
-
+                            } catch (IllegalAccessException | InvocationTargetException e) {
+                                System.out.println(e.getMessage());
                             }
                         }
                     }
