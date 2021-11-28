@@ -1,28 +1,39 @@
 package WebServer;
 
+import WebServer.MVC.BaseController;
+import WebServer.MVC.Router;
 import WebServer.Request.Request;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class WebServer {
+public class WebServer{
 
     public int httpPortNumber = 80;
     public int tlsPortNumber = 443;
     public int maxThreadsInPool = 1;
+    public ArrayList<BaseController> registeredControllers;
 
-    public WebServer(int httpPortNumber, int tlsPortNumber, int maxThreadsInPool){
+    public WebServer(
+            int httpPortNumber,
+            int tlsPortNumber,
+            int maxThreadsInPool,
+            ArrayList<BaseController> registeredControllers
+    ){
         this.httpPortNumber = httpPortNumber;
         this.tlsPortNumber = tlsPortNumber;
         this.maxThreadsInPool = maxThreadsInPool;
+        this.registeredControllers = registeredControllers;
+
+        Router.registeredRoutes = registeredControllers;
     }
 
     public void startHTTPServer(){
         try {
-
             // Setup the listener socket on the defined port
             ServerSocket httpServer = new ServerSocket(this.httpPortNumber);
             ExecutorService pool = Executors.newFixedThreadPool(this.maxThreadsInPool);
