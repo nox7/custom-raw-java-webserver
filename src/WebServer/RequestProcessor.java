@@ -1,5 +1,8 @@
 package WebServer;
 
+import WebServer.MVC.Annotations.Route;
+import WebServer.MVC.RouteResponse;
+import WebServer.MVC.Router;
 import WebServer.Request.Request;
 
 import java.io.*;
@@ -107,24 +110,33 @@ public class RequestProcessor implements Runnable{
                 System.out.println(requestBodyBuilder.toString());
             }
 
-            // Response
-            String bodyPayload = "<!doctype><html><head></head><body><p style=\"background-color:blue; padding:5rem;\">Hello world!</p></body></html>";
-            HttpStatusLine statusLine = new HttpStatusLine("1.1", 200, "OK");
-            Headers headers = new Headers();
-            Body body = new Body(bodyPayload);
-            headers.addHeader(new Header("Content-Type", "text/html"));
-            headers.addHeader(new Header("Connection", "close"));
-            headers.addHeader(new Header("Content-Length", String.valueOf(body.getContentLength())));
+            // Try to route the request
+            Router router = new Router();
+            RouteResponse routeResponse = router.routeRequest(request.method, request.uri);
+            if (routeResponse.didMatchRoute) {
+                System.out.println("Route response body " + routeResponse.httpResponse.body);
 
-            // Prepare the headers and then concat the HTML response body
-            System.out.println(statusLine.toString());
-            String toSendToClient = statusLine.toString()
-                    .concat(headers.toString())
-                    .concat("\r\n")
-                    .concat(body.toString());
-            outputStreamWriter.print(toSendToClient);
-            System.out.println("Sending output stream to client connection.");
-            outputStreamWriter.flush();
+                // Response
+                String bodyPayload = "<!doctype><html><head></head><body><p style=\"background-color:blue; padding:5rem;\">Hello world!</p></body></html>";
+                HttpStatusLine statusLine = new HttpStatusLine("1.1", 200, "OK");
+                Headers headers = new Headers();
+                Body body = new Body(bodyPayload);
+                headers.addHeader(new Header("Content-Type", "text/html"));
+                headers.addHeader(new Header("Connection", "close"));
+                headers.addHeader(new Header("Content-Length", String.valueOf(body.getContentLength())));
+
+                // Prepare the headers and then concat the HTML response body
+                System.out.println(statusLine.toString());
+                String toSendToClient = statusLine.toString()
+                        .concat(headers.toString())
+                        .concat("\r\n")
+                        .concat(body.toString());
+                outputStreamWriter.print(toSendToClient);
+                System.out.println("Sending output stream to client connection.");
+                outputStreamWriter.flush();
+            }else{
+                System.out.println("ERROR: 404 on requested URI " + request.uri);
+            }
             clientSocket.close(); // Close the client socket
         }catch(IOException ignored){
 
