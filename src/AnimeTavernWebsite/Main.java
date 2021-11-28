@@ -4,6 +4,7 @@ import AnimeTavernWebsite.Controllers.HomeController;
 import WebServer.MVC.Annotations.Route;
 import WebServer.MVC.BaseController;
 import WebServer.MVC.HttpResponse;
+import WebServer.WebServer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -19,6 +20,9 @@ public class Main {
         registeredControllers.add(new HomeController());
 
         String testURI = "/";
+
+        WebServer httpWebServer = new WebServer(80, 443, 2);
+        httpWebServer.startHTTPServer();
 
 
         // Ignore below
