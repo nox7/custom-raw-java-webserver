@@ -25,19 +25,26 @@ public class Router {
                     for (Route r : methodRoutes) {
                         System.out.println("RECEIVED URI and METHOD " + uri + " " + method + " against " + r.uri() + " and METHOD " + r.method());
                         if (r.uri().equalsIgnoreCase(uri) && r.method().equalsIgnoreCase(method)) {
+                            System.out.println("yes");
                             try {
+                                System.out.println("WILL INVOKE");
                                 HttpResponse response = (HttpResponse) m.invoke(c);
+                                System.out.println("INVOKED");
                                 routeResponse.didMatchRoute = true;
                                 routeResponse.httpResponse = response;
+                                System.out.println("DONE");
                                 break controllerLoop;
-                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                System.out.println(e.getMessage());
+                            } catch (IllegalAccessException e) {
+                                System.out.println("There was an exception in the router." + e.getClass().toString() + " message: " + e.getMessage());
+                            }catch(InvocationTargetException e){
+                                System.out.println("Invocation exception propagated ." + e.getCause().getMessage());
                             }
                         }
                     }
                 }
             }
         }
+
         return routeResponse;
     }
 }
